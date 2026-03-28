@@ -1,0 +1,64 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Subject {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique
+  slug        String    @unique
+  description String?
+  createdAt   DateTime  @default(now())
+  chapters    Chapter[]
+}
+
+model Chapter {
+  id          Int        @id @default(autoincrement())
+  title       String
+  slug        String
+  order       Int
+  subjectId   Int
+  subject     Subject    @relation(fields: [subjectId], references: [id])
+  createdAt   DateTime   @default(now())
+  lessons     Lesson[]
+  exercises   Exercise[]
+
+  @@unique([subjectId, slug])
+}
+
+model Lesson {
+  id        Int      @id @default(autoincrement())
+  title     String
+  slug      String
+  content   String
+  order     Int
+  chapterId Int
+  chapter   Chapter  @relation(fields: [chapterId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@unique([chapterId, slug])
+}
+
+model Exercise {
+  id          Int        @id @default(autoincrement())
+  title       String
+  slug        String
+  question    String
+  answer      String?
+  difficulty  Difficulty
+  order       Int
+  chapterId   Int
+  chapter     Chapter    @relation(fields: [chapterId], references: [id])
+  createdAt   DateTime   @default(now())
+
+  @@unique([chapterId, slug])
+}
+
+enum Difficulty {
+  easy
+  medium
+  hard
+}
