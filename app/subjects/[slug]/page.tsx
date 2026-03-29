@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 export default async function SubjectPage({
@@ -20,13 +21,14 @@ export default async function SubjectPage({
       <p className="text-gray-500 mb-12">{subject.description}</p>
 
       <div className="flex flex-col gap-4">
-        {subject.chapters.length === 0 && (
-          <p className="text-gray-400">Aucun chapitre pour le moment.</p>
-        )}
         {subject.chapters.map((chapter) => (
-          <div key={chapter.id} className="border rounded-xl p-6">
+          <Link
+            key={chapter.id}
+            href={`/subjects/${subject.slug}/chapters/${chapter.slug}`}
+            className="border rounded-xl p-6 hover:shadow-md transition"
+          >
             <h2 className="text-xl font-semibold">{chapter.title}</h2>
-          </div>
+          </Link>
         ))}
       </div>
     </main>
