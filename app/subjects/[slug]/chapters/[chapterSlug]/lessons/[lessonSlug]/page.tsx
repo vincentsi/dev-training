@@ -12,32 +12,28 @@ export default async function LessonPage({
   const lesson = await prisma.lesson.findFirst({
     where: {
       slug: lessonSlug,
-      chapter: {
-        slug: chapterSlug,
-        subject: { slug },
-      },
+      chapter: { slug: chapterSlug, subject: { slug } },
     },
-    include: {
-      chapter: {
-        include: { subject: true },
-      },
-    },
+    include: { chapter: { include: { subject: true } } },
   });
 
   if (!lesson) notFound();
 
   return (
-    <main className="max-w-4xl mx-auto px-6 py-12">
+    <main className="max-w-4xl mx-auto px-6 py-16">
       <Link
         href={`/subjects/${slug}/chapters/${chapterSlug}`}
-        className="text-sm text-gray-400 hover:text-gray-600 mb-6 block"
+        className="font-mono text-sm text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 mb-8 block transition"
       >
         ← {lesson.chapter.title}
       </Link>
 
-      <h1 className="text-4xl font-bold mb-8">{lesson.title}</h1>
+      <p className="font-mono text-green-600 dark:text-green-500 text-sm mb-3">{`// lesson`}</p>
+      <h1 className="text-5xl font-bold mb-12">{lesson.title}</h1>
 
-      <div className="prose max-w-none">{lesson.content}</div>
+      <div className="border border-gray-200 dark:border-[#2a2a2a] rounded-lg p-8 bg-white dark:bg-[#161b22] leading-relaxed text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
+        {lesson.content}
+      </div>
     </main>
   );
 }

@@ -10,10 +10,7 @@ export default async function ChapterPage({
   const { slug, chapterSlug } = await params;
 
   const chapter = await prisma.chapter.findFirst({
-    where: {
-      slug: chapterSlug,
-      subject: { slug },
-    },
+    where: { slug: chapterSlug, subject: { slug } },
     include: {
       subject: true,
       lessons: { orderBy: { order: "asc" } },
@@ -24,51 +21,69 @@ export default async function ChapterPage({
   if (!chapter) notFound();
 
   return (
-    <main className="max-w-4xl mx-auto px-6 py-12">
+    <main className="max-w-4xl mx-auto px-6 py-16">
       <Link
         href={`/subjects/${slug}`}
-        className="text-sm text-gray-400 hover:text-gray-600 mb-6 block"
+        className="font-mono text-sm text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 mb-8 block transition"
       >
         ← {chapter.subject.name}
       </Link>
 
-      <h1 className="text-4xl font-bold mb-12">{chapter.title}</h1>
+      <p className="font-mono text-green-600 dark:text-green-500 text-sm mb-3">{`// ${chapter.slug}`}</p>
+      <h1 className="text-5xl font-bold mb-12">{chapter.title}</h1>
 
       {chapter.lessons.length > 0 && (
         <section className="mb-10">
-          <h2 className="text-xl font-semibold mb-4">Cours</h2>
+          <p className="font-mono text-xs text-gray-400 mb-4">
+            const lessons = [
+          </p>
           <div className="flex flex-col gap-3">
-            {chapter.lessons.map((lesson) => (
+            {chapter.lessons.map((lesson, index) => (
               <Link
                 key={lesson.id}
                 href={`/subjects/${slug}/chapters/${chapterSlug}/lessons/${lesson.slug}`}
-                className="border rounded-xl p-5 hover:shadow-md transition"
+                className="border border-gray-200 dark:border-[#2a2a2a] rounded-lg p-5 hover:border-green-500 dark:hover:border-green-500 transition-colors bg-white dark:bg-[#161b22] flex items-center gap-4 group"
               >
-                {lesson.title}
+                <span className="font-mono text-xs text-gray-400 w-6">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <span className="font-medium group-hover:text-green-600 dark:group-hover:text-green-500 transition-colors">
+                  {lesson.title}
+                </span>
               </Link>
             ))}
           </div>
+          <p className="font-mono text-xs text-gray-400 mt-3">]</p>
         </section>
       )}
 
       {chapter.exercises.length > 0 && (
         <section>
-          <h2 className="text-xl font-semibold mb-4">Exercices</h2>
+          <p className="font-mono text-xs text-gray-400 mb-4">
+            const exercises = [
+          </p>
           <div className="flex flex-col gap-3">
-            {chapter.exercises.map((exercise) => (
+            {chapter.exercises.map((exercise, index) => (
               <Link
                 key={exercise.id}
                 href={`/subjects/${slug}/chapters/${chapterSlug}/exercises/${exercise.slug}`}
-                className="border rounded-xl p-5 hover:shadow-md transition flex justify-between items-center"
+                className="border border-gray-200 dark:border-[#2a2a2a] rounded-lg p-5 hover:border-green-500 dark:hover:border-green-500 transition-colors bg-white dark:bg-[#161b22] flex items-center justify-between group"
               >
-                <span>{exercise.title}</span>
+                <div className="flex items-center gap-4">
+                  <span className="font-mono text-xs text-gray-400 w-6">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <span className="font-medium group-hover:text-green-600 dark:group-hover:text-green-500 transition-colors">
+                    {exercise.title}
+                  </span>
+                </div>
                 <span
-                  className={`text-xs font-medium px-2 py-1 rounded-full ${
+                  className={`text-xs font-mono px-2 py-1 rounded ${
                     exercise.difficulty === "easy"
-                      ? "bg-green-100 text-green-700"
+                      ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
                       : exercise.difficulty === "medium"
-                        ? "bg-yellow-100 text-yellow-700"
-                        : "bg-red-100 text-red-700"
+                        ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"
+                        : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
                   }`}
                 >
                   {exercise.difficulty}
@@ -76,11 +91,14 @@ export default async function ChapterPage({
               </Link>
             ))}
           </div>
+          <p className="font-mono text-xs text-gray-400 mt-3">]</p>
         </section>
       )}
 
       {chapter.lessons.length === 0 && chapter.exercises.length === 0 && (
-        <p className="text-gray-400">Aucun contenu pour le moment.</p>
+        <p className="font-mono text-sm text-gray-400">
+          // aucun contenu pour le moment
+        </p>
       )}
     </main>
   );
